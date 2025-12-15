@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双六不動産投資ゲーム</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div id="game-container">
+        <header>
+            <h1>双六不動産投資ゲーム</h1>
+            <div id="game-info">
+                <span id="current-year">1年目</span>
+                <span id="current-month">4月</span>
+                <span id="current-player">プレイヤー1のターン</span>
+            </div>
+        </header>
+
+        <div id="main-game">
+            <!-- ボード表示エリア -->
+            <div id="board-container">
+                <canvas id="game-board" width="800" height="600"></canvas>
+            </div>
+
+            <!-- サイドパネル -->
+            <div id="side-panel">
+                <!-- プレイヤー情報 -->
+                <div id="players-info">
+                    <h2>プレイヤー情報</h2>
+                    <div id="players-list"></div>
+                </div>
+
+                <!-- 目的地情報 -->
+                <div id="destination-info">
+                    <h3>目的地</h3>
+                    <div id="destination-name">東京駅</div>
+                    <div id="destination-reward">援助金: 100万円</div>
+                </div>
+
+                <!-- 所有物件 -->
+                <div id="properties-panel">
+                    <h3>所有物件</h3>
+                    <div id="properties-list"></div>
+                </div>
+
+                <!-- カード -->
+                <div id="cards-panel">
+                    <h3>所持カード</h3>
+                    <div id="cards-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- コントロールパネル -->
+        <div id="control-panel">
+            <button id="roll-dice-btn" class="btn btn-primary">サイコロを振る</button>
+            <button id="use-card-btn" class="btn btn-secondary" disabled>カードを使う</button>
+            <button id="buy-property-btn" class="btn btn-success" disabled>物件を購入</button>
+            <button id="sell-property-btn" class="btn btn-danger" disabled>物件を売却</button>
+            <button id="end-turn-btn" class="btn btn-secondary">ターン終了</button>
+        </div>
+
+        <!-- イベントログ -->
+        <div id="event-log">
+            <h3>イベントログ</h3>
+            <div id="log-messages"></div>
+        </div>
+
+        <!-- モーダルダイアログ -->
+        <div id="modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="modal-title"></h2>
+                <div id="modal-body"></div>
+                <div class="modal-buttons">
+                    <button id="modal-confirm" class="btn btn-primary">確認</button>
+                    <button id="modal-cancel" class="btn btn-secondary">キャンセル</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ゲーム設定ダイアログ -->
+        <div id="setup-modal" class="modal">
+            <div class="modal-content">
+                <h2>ゲーム設定</h2>
+                <div class="setup-form">
+                    <label>プレイヤー数:
+                        <select id="player-count">
+                            <option value="2">2人</option>
+                            <option value="3">3人</option>
+                            <option value="4" selected>4人</option>
+                        </select>
+                    </label>
+                    <label>ゲーム年数:
+                        <select id="game-years">
+                            <option value="1">1年</option>
+                            <option value="3" selected>3年</option>
+                            <option value="5">5年</option>
+                            <option value="10">10年</option>
+                        </select>
+                    </label>
+                    <label>初期資金:
+                        <input type="number" id="initial-money" value="1000" min="100" step="100">
+                        <span>万円</span>
+                    </label>
+                </div>
+                <button id="start-game-btn" class="btn btn-primary">ゲーム開始</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ゲームスクリプト -->
+    <script src="src/utils.js"></script>
+    <script src="src/property.js"></script>
+    <script src="src/card.js"></script>
+    <script src="src/square.js"></script>
+    <script src="src/player.js"></script>
+    <script src="src/board.js"></script>
+    <script src="src/bomby.js"></script>
+    <script src="src/game.js"></script>
+    <script src="src/ui.js"></script>
+    <script src="src/main.js"></script>
+</body>
+</html>

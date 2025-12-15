@@ -1,0 +1,12 @@
+{
+  "name": "sugoroku-property-game",
+  "version": "1.0.0",
+  "description": "桃太郎電鉄風の不動産投資ボードゲーム",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000"
+  },
+  "keywords": ["game", "board-game", "property", "sugoroku"],
+  "author": "",
+  "license": "MIT"
+}
