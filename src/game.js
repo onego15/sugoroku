@@ -4,6 +4,7 @@ class Game {
         this.config = config;
         this.board = new Board();
         this.players = [];
+        this.aiPlayers = []; // AIプレイヤー管理
         this.currentPlayerIndex = 0;
         this.currentYear = 1;
         this.currentMonth = 4; // 4月開始
@@ -21,12 +22,23 @@ class Game {
     initialize() {
         // プレイヤーを作成
         for (let i = 0; i < this.config.playerCount; i++) {
-            const player = new Player(i, `プレイヤー${i + 1}`, this.config.initialMoney);
+            const aiSetting = this.config.aiSettings ? this.config.aiSettings[i] : { isAI: false };
+            const playerName = aiSetting.isAI ? `AI${i + 1}` : `プレイヤー${i + 1}`;
+            const player = new Player(i, playerName, this.config.initialMoney);
+
             // 初期カードを配布
             for (let j = 0; j < 3; j++) {
                 player.cards.push(generateRandomCard());
             }
+
             this.players.push(player);
+
+            // AIプレイヤーの場合、AIインスタンスを作成
+            if (aiSetting.isAI) {
+                const difficulty = aiSetting.difficulty || 'normal';
+                const aiPlayer = new AIPlayer(player, difficulty);
+                this.aiPlayers[i] = aiPlayer;
+            }
         }
 
         // 最初の目的地を設定
@@ -132,6 +144,9 @@ class Game {
         // ゲーム終了チェック
         if (this.isGameOver) {
             this.endGame();
+        } else {
+            // 次のプレイヤーがAIならターンを実行
+            this.checkAndPlayAITurn();
         }
     }
 
@@ -293,5 +308,37 @@ class Game {
         if (this.ui) {
             this.ui.updateLog();
         }
+    }
+
+    // AIプレイヤーのターンをチェックして実行
+    checkAndPlayAITurn() {
+        const currentPlayer = this.getCurrentPlayer();
+        const aiPlayer = this.aiPlayers[currentPlayer.id];
+
+        if (aiPlayer && !this.isGameOver) {
+            // UIのボタンを無効化
+            if (this.ui) {
+                this.ui.disableControls();
+            }
+
+            // AIのターンを実行（非同期）
+            aiPlayer.playTurn(this).then(() => {
+                // AIのターン終了後、UIを有効化
+                if (this.ui) {
+                    this.ui.enableControls();
+                }
+            });
+        } else {
+            // 人間プレイヤーの場合、UIを有効化
+            if (this.ui) {
+                this.ui.enableControls();
+            }
+        }
+    }
+
+    // 現在のプレイヤーがAIかどうか
+    isCurrentPlayerAI() {
+        const currentPlayer = this.getCurrentPlayer();
+        return this.aiPlayers[currentPlayer.id] !== undefined;
     }
 }

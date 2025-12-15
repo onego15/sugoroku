@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // ゲーム設定モーダルを表示
     showSetupModal();
 
+    // プレイヤー数が変更されたらAI設定を更新
+    document.getElementById('player-count').addEventListener('change', updateAIControls);
+
+    // 初期のAI設定を表示
+    updateAIControls();
+
     // ゲーム開始ボタン
     document.getElementById('start-game-btn').addEventListener('click', startGame);
 });
@@ -18,6 +24,42 @@ function showSetupModal() {
     setupModal.classList.remove('hidden');
 }
 
+// AI設定コントロールを更新
+function updateAIControls() {
+    const playerCount = parseInt(document.getElementById('player-count').value);
+    const aiControlsContainer = document.getElementById('ai-player-controls');
+
+    aiControlsContainer.innerHTML = '';
+
+    for (let i = 0; i < playerCount; i++) {
+        const controlDiv = document.createElement('div');
+        controlDiv.style.cssText = 'display: flex; align-items: center; gap: 10px; margin-bottom: 8px;';
+
+        controlDiv.innerHTML = `
+            <label style="min-width: 100px;">プレイヤー${i + 1}:</label>
+            <label style="display: flex; align-items: center; gap: 5px;">
+                <input type="checkbox" id="ai-player-${i}" ${i > 0 ? 'checked' : ''}>
+                <span>AI</span>
+            </label>
+            <select id="ai-difficulty-${i}" ${i === 0 ? 'disabled' : ''} style="padding: 5px;">
+                <option value="easy">簡単</option>
+                <option value="normal" selected>普通</option>
+                <option value="hard">難しい</option>
+            </select>
+        `;
+
+        // チェックボックスの変更時に難易度選択を有効/無効化
+        const checkbox = controlDiv.querySelector(`#ai-player-${i}`);
+        const difficultySelect = controlDiv.querySelector(`#ai-difficulty-${i}`);
+
+        checkbox.addEventListener('change', function() {
+            difficultySelect.disabled = !this.checked;
+        });
+
+        aiControlsContainer.appendChild(controlDiv);
+    }
+}
+
 // ゲームを開始
 function startGame() {
     // 設定を取得
@@ -25,11 +67,20 @@ function startGame() {
     const gameYears = parseInt(document.getElementById('game-years').value);
     const initialMoney = parseInt(document.getElementById('initial-money').value);
 
+    // AI設定を取得
+    const aiSettings = [];
+    for (let i = 0; i < playerCount; i++) {
+        const isAI = document.getElementById(`ai-player-${i}`).checked;
+        const difficulty = document.getElementById(`ai-difficulty-${i}`).value;
+        aiSettings.push({ isAI, difficulty });
+    }
+
     // ゲーム設定
     const config = {
         playerCount: playerCount,
         years: gameYears,
-        initialMoney: initialMoney
+        initialMoney: initialMoney,
+        aiSettings: aiSettings
     };
 
     // ゲームを初期化
@@ -47,6 +98,9 @@ function startGame() {
     document.getElementById('setup-modal').classList.add('hidden');
 
     console.log('ゲーム開始！');
+
+    // AIプレイヤーのターンを開始
+    game.checkAndPlayAITurn();
 }
 
 // デバッグ用の関数

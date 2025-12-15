@@ -176,6 +176,12 @@ class UIManager {
     updateButtons() {
         const player = this.game.getCurrentPlayer();
 
+        // AIプレイヤーのターンの場合はすべて無効化
+        if (this.game.isCurrentPlayerAI()) {
+            this.disableControls();
+            return;
+        }
+
         // カード使用ボタン
         this.elements.useCardBtn.disabled = player.cards.length === 0;
 
@@ -189,6 +195,31 @@ class UIManager {
             this.elements.buyPropertyBtn.disabled = true;
             this.elements.sellPropertyBtn.disabled = true;
             this.elements.endTurnBtn.disabled = true;
+        }
+    }
+
+    // コントロールを無効化（AIのターン中）
+    disableControls() {
+        this.elements.rollDiceBtn.disabled = true;
+        this.elements.useCardBtn.disabled = true;
+        this.elements.buyPropertyBtn.disabled = true;
+        this.elements.sellPropertyBtn.disabled = true;
+        this.elements.endTurnBtn.disabled = true;
+    }
+
+    // コントロールを有効化（人間プレイヤーのターン）
+    enableControls() {
+        if (this.game.isGameOver) return;
+
+        const player = this.game.getCurrentPlayer();
+
+        // 人間プレイヤーのターンのみ有効化
+        if (!this.game.isCurrentPlayerAI()) {
+            this.elements.rollDiceBtn.disabled = false;
+            this.elements.useCardBtn.disabled = player.cards.length === 0;
+            this.elements.buyPropertyBtn.disabled = true; // 物件マスに止まるまで無効
+            this.elements.sellPropertyBtn.disabled = player.properties.length === 0;
+            this.elements.endTurnBtn.disabled = false;
         }
     }
 
